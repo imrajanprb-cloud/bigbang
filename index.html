@@ -1330,5 +1330,67 @@
   });
 </script>
 
+<script>
+/**
+ * ============================================================
+ *  CBT PLATFORM — GITHUB PAGES COMPATIBILITY LAYER
+ *  Intercepts google.script.run calls and routes them via fetch()
+ * ============================================================
+ */
+
+// Paste your deployed Google Apps Script Web App URL inside the quotes below:
+const GOOGLE_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwwis8a1zReCCZVg8Z9B1sqeWhAP98qHVc9-hRGs72uI-62IqxDDgxySPqsVEcRYVNFKg/exec";
+
+if (typeof google === 'undefined' || !google.script || !google.script.run) {
+  window.google = window.google || {};
+  window.google.script = window.google.script || {};
+
+  class ScriptRunMock {
+    constructor(successCb = null, failureCb = null) {
+      this.successHandler = successCb;
+      this.failureHandler = failureCb;
+    }
+    withSuccessHandler(cb) { return new ScriptRunMock(cb, this.failureHandler); }
+    withFailureHandler(cb) { return new ScriptRunMock(this.successHandler, cb); }
+  }
+
+  window.google.script.run = new Proxy(new ScriptRunMock(), {
+    get(target, prop) {
+      if (prop === 'withSuccessHandler' || prop === 'withFailureHandler') {
+        return target[prop].bind(target);
+      }
+
+      return function(...args) {
+        let payloadParams = {};
+        if (prop === 'checkLogin') {
+          payloadParams = { email: args[0], password: args[1] };
+        } else if (prop === 'getAvailablePapers') {
+          payloadParams = { topicCode: args[0], examType: args[1] };
+        } else if (prop === 'getPaperPattern') {
+          payloadParams = { paperCode: args[0] };
+        } else {
+          payloadParams = args[0] !== undefined ? args[0] : {};
+        }
+
+        const targetUrl = `${GOOGLE_SCRIPT_WEB_APP_URL}?action=${prop}&params=${encodeURIComponent(JSON.stringify(payloadParams))}`;
+
+        fetch(targetUrl)
+          .then(res => {
+            if (!res.ok) throw new Error("Network error contacting Google Sheets");
+            return res.json();
+          })
+          .then(data => {
+            if (target.successHandler) target.successHandler(data);
+          })
+          .catch(err => {
+            console.error("Authentication Bridge Error:", err);
+            if (target.failureHandler) target.failureHandler(err);
+          });
+      };
+    }
+  });
+}
+</script>
+  
 </body>
 </html>
