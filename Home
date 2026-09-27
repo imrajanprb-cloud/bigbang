@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Physics Test Series — JEE Main &amp; Advanced</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F2540; --navy-2:#16324F;
+    --ink:#16202B; --muted:#55636F;
+    --paper:#F1F4F8; --white:#FFFFFF;
+    --line:#D8DEE4;
+    --amber:#C9820A;
+    --amber-soft:#FBF0DC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0B1420; --white:#101B29; --ink:#E7ECF1; --muted:#93A3B3; --line:#243244;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0B1420; --white:#101B29; --ink:#E7ECF1; --muted:#93A3B3; --line:#243244;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:24px;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'IBM Plex Sans',system-ui,sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- Nav ---------- */
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 0;
+  }
+  .brand{font-weight:700;font-size:17px;letter-spacing:.01em;}
+  .brand .dot{color:var(--amber);}
+  .nav-cta{
+    background:var(--navy);color:#fff;padding:9px 18px;border-radius:5px;
+    font-size:13px;font-weight:600;text-decoration:none;
+  }
+  button.nav-cta{border:none;cursor:pointer;font-family:inherit;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center;
+    padding:56px 0 72px;
+  }
+  h1{
+    font-size:clamp(32px,4.4vw,50px);line-height:1.12;margin:0 0 20px;font-weight:700;
+    letter-spacing:-0.01em;max-width:15ch;
+  }
+  .sub{font-size:17px;line-height:1.6;color:var(--muted);max-width:44ch;margin:0 0 30px;}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .btn-primary{
+    background:var(--amber);color:#1A1200;padding:14px 26px;border-radius:6px;
+    font-size:15px;font-weight:600;text-decoration:none;display:inline-block;
+  }
+  .btn-ghost{
+    color:var(--navy);font-size:14px;font-weight:600;text-decoration:none;
+    border-bottom:1px solid var(--line);padding-bottom:2px;
+  }
+  :root[data-theme="dark"] .btn-ghost, @media (prefers-color-scheme:dark){.btn-ghost{color:var(--ink);}}
+
+  .hero-visual{display:flex;flex-direction:column;gap:16px;}
+
+  /* ---------- Monkey & falling-object physics demo ---------- */
+  .physics-demo{
+    background:var(--white);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px 12px;
+  }
+  .physics-demo svg{display:block;width:100%;height:auto;}
+  .demo-caption{font-size:12px;color:var(--muted);text-align:center;margin-top:6px;line-height:1.5;}
+  .monkey-fall{
+    transform:translate(90px,52px);
+    animation:monkeyFall 1.6s ease-in infinite;
+  }
+  @keyframes monkeyFall{
+    0%{transform:translate(90px,52px);}
+    82%{transform:translate(90px,148px);}
+    100%{transform:translate(90px,148px);}
+  }
+  .impact-spark{
+    opacity:0;transform-box:fill-box;transform-origin:center;
+    animation:spark 1.6s linear infinite;
+  }
+  @keyframes spark{
+    0%,74%{opacity:0;transform:scale(.4);}
+    82%{opacity:1;transform:scale(1.7);}
+    92%{opacity:0;transform:scale(2.3);}
+    100%{opacity:0;transform:scale(.4);}
+  }
+
+  .mock-cbt{
+    background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  }
+  .browser-chrome{display:flex;align-items:center;gap:6px;padding:9px 12px;background:#EDEFF2;border-bottom:1px solid var(--line);}
+  :root[data-theme="dark"] .browser-chrome{background:#182430;}
+  .browser-chrome .dot{width:7px;height:7px;border-radius:50%;background:#C6CBD1;}
+  .mock-topbar{
+    background:var(--navy);color:#fff;display:flex;justify-content:space-between;align-items:center;
+    padding:11px 16px;font-family:'IBM Plex Mono',monospace;font-size:12px;
+  }
+  .mock-timer{background:rgba(255,255,255,.15);padding:3px 10px;border-radius:4px;font-weight:600;}
+  .mock-body{display:flex;gap:16px;padding:18px;background:var(--white);}
+  .mock-question{flex:1;min-width:0;}
+  .mock-qhead{font-size:12.5px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .mock-tag{font-size:10px;background:var(--amber-soft);color:#8A5A00;padding:3px 8px;border-radius:20px;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+  .mock-qimg{
+    background-image:repeating-linear-gradient(0deg, var(--line) 0 1px, transparent 1px 18px),
+                      repeating-linear-gradient(90deg, var(--line) 0 1px, transparent 1px 18px);
+    background-color:var(--paper);
+    height:92px;border-radius:6px;border:1px solid var(--line);margin-bottom:14px;
+  }
+  .mock-options{display:flex;gap:9px;}
+  .mock-options .opt{
+    width:27px;height:27px;border-radius:50%;border:1.5px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);
+    font-family:'IBM Plex Sans',sans-serif;
+  }
+  .mock-options .opt.sel{background:var(--navy);border-color:var(--navy);color:#fff;}
+  .mock-palette{
+    width:100px;flex-shrink:0;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;align-content:start;padding-top:2px;
+  }
+  .mock-palette .cell{width:18px;height:18px;border-radius:3px;}
+  .mock-palette .cell.nv{background:#ADB5BD;}
+  .mock-palette .cell.na{background:#D9480F;}
+  .mock-palette .cell.an{background:#2F9E44;}
+  .mock-palette .cell.mk{background:#6741D9;}
+  .mock-palette .cell.amk{background:#6741D9;box-shadow:inset 0 0 0 2px #2F9E44;}
+
+  /* ---------- Stat strip ---------- */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .stat{padding:22px 4px;text-align:center;border-left:1px solid var(--line);}
+  .stat:first-child{border-left:none;}
+  .stat .n{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--navy);}
+  :root[data-theme="dark"] .stat .n{color:#fff;}
+  .stat .l{font-size:12.5px;color:var(--muted);margin-top:4px;}
+
+  /* ---------- Ladder (test formats) ---------- */
+  .ladder{padding:64px 0 8px;}
+  .ladder h2{font-size:26px;margin:0 0 8px;font-weight:700;letter-spacing:-.01em;}
+  .ladder .lead{color:var(--muted);font-size:14.5px;margin:0 0 28px;max-width:56ch;}
+  .ladder-list{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--white);}
+  .ladder-row{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:20px 22px;border-top:1px solid var(--line);}
+  .ladder-row:first-child{border-top:none;}
+  .ladder-num{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);padding-top:2px;}
+  .ladder-row h3{margin:0 0 4px;font-size:15.5px;font-weight:600;}
+  .ladder-row p{margin:0;font-size:13.5px;line-height:1.6;color:var(--muted);max-width:60ch;}
+  .book-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .book-tags span{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:var(--white);
+    border:1px solid #E3C578;color:#8A5A00;padding:5px 10px;border-radius:20px;
+  }
+  :root[data-theme="dark"] .book-tags span{background:#1C1608;color:#E3B84A;border-color:#5C4400;}
+
+  /* ---------- Features ---------- */
+  .features{padding:72px 0;}
+  .features h2{font-size:26px;margin:0 0 40px;max-width:26ch;font-weight:700;letter-spacing:-.01em;}
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .feat{border-top:2px solid var(--navy);padding-top:16px;}
+  :root[data-theme="dark"] .feat{border-top-color:#3E6FA3;}
+  .feat h3{font-size:16px;margin:0 0 8px;font-weight:600;}
+  .feat p{font-size:14px;line-height:1.65;color:var(--muted);margin:0;}
+  .feat .icon{margin-bottom:14px;}
+
+  /* ---------- Topics ---------- */
+  .topics{padding:56px 0 72px;}
+  .topics h2{font-size:26px;margin:0 0 8px;font-weight:700;letter-spacing:-.01em;}
+  .topics .lead{color:var(--muted);font-size:14.5px;margin:0 0 28px;}
+  .topic-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;
+  }
+  .topic{background:var(--white);padding:14px 16px;font-size:13.5px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .topic .code{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--amber);font-weight:600;flex-shrink:0;}
+
+  /* ---------- Closing CTA ---------- */
+  .closing{
+    background:var(--navy);color:#EAF0F7;border-radius:12px;margin:0 0 72px;
+    padding:52px 40px;text-align:center;
+  }
+  .closing h2{font-size:28px;margin:0 0 12px;font-weight:700;color:#fff;}
+  .closing p{color:#B9C8D9;margin:0 0 26px;font-size:15px;}
+
+  footer{border-top:1px solid var(--line);padding:26px 0 40px;font-size:13px;color:var(--muted);}
+
+  /* ---------- Auth modal ---------- */
+  button.btn-primary{border:none;cursor:pointer;font-family:inherit;}
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(10,18,28,.55);
+    display:flex;align-items:center;justify-content:center;padding:20px;
+    opacity:0;pointer-events:none;transition:opacity .18s ease;z-index:50;
+  }
+  .modal-overlay.open{opacity:1;pointer-events:auto;}
+  .modal-card{
+    background:var(--white);border:1px solid var(--line);border-radius:12px;
+    padding:32px 28px;max-width:380px;width:100%;position:relative;
+  }
+  .modal-card h3{margin:0 0 8px;font-size:19px;font-weight:700;}
+  .modal-card p{margin:0 0 22px;font-size:14px;color:var(--muted);line-height:1.55;}
+  .modal-actions{display:flex;flex-direction:column;gap:10px;}
+  .btn-primary.full,.btn-secondary.full{width:100%;text-align:center;box-sizing:border-box;}
+  .btn-secondary{
+    background:transparent;border:1px solid var(--line);color:var(--ink);
+    padding:14px 26px;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+  }
+  .modal-close{
+    position:absolute;top:14px;right:14px;background:none;border:none;
+    font-size:16px;color:var(--muted);cursor:pointer;line-height:1;padding:4px;
+  }
+  .modal-note{color:var(--amber);font-size:13px;margin:14px 0 0;min-height:16px;}
+
+  @media (max-width:820px){
+    .hero{grid-template-columns:1fr;padding-top:32px;}
+    .hero-visual{order:-1;}
+    .stats{grid-template-columns:1fr;}
+    .stat{border-left:none;border-top:1px solid var(--line);}
+    .stat:first-child{border-top:none;}
+    .feat-grid{grid-template-columns:1fr;gap:32px;}
+    .topic-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="nav">
+    <div class="brand">Physics<span class="dot">·</span>JEE</div>
+    <button class="nav-cta" onclick="openAuthModal()">Start a Test</button>
+  </div>
+
+  <section class="hero">
+    <div>
+      <h1>Practice physics the way JEE actually tests it.</h1>
+      <p class="sub">From a two-minute topic quiz to problems pulled straight from Irodov and Krotov — every format is delivered in the same timed CBT interface used on exam day, with a result the moment you submit.</p>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="openAuthModal()">Start a Test</button>
+        <a class="btn-ghost" href="#topics">See topics covered</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="physics-demo">
+        <svg viewBox="0 0 380 190" xmlns="http://www.w3.org/2000/svg">
+          <!-- ground -->
+          <line x1="10" y1="172" x2="370" y2="172" stroke="var(--line)" stroke-width="1.5"/>
+
+          <!-- tree -->
+          <rect x="38" y="105" width="9" height="67" fill="#8A6B4A"/>
+          <ellipse cx="55" cy="88" rx="38" ry="28" fill="#8FAE85"/>
+          <ellipse cx="38" cy="98" rx="24" ry="18" fill="#7C9473"/>
+
+          <!-- person, mid-throw -->
+          <g>
+            <circle cx="322" cy="132" r="8" fill="var(--navy)"/>
+            <rect x="314" y="140" width="16" height="26" rx="4" fill="var(--navy)"/>
+            <line x1="314" y1="166" x2="308" y2="172" stroke="var(--navy)" stroke-width="5" stroke-linecap="round"/>
+            <line x1="330" y1="166" x2="336" y2="172" stroke="var(--navy)" stroke-width="5" stroke-linecap="round"/>
+            <line x1="317" y1="145" x2="300" y2="118" stroke="var(--navy)" stroke-width="5" stroke-linecap="round"/>
+          </g>
+
+          <!-- monkey (falls via CSS animation) -->
+          <g class="monkey-fall">
+            <ellipse cx="0" cy="8" rx="9" ry="11" fill="#8B5E34"/>
+            <circle cx="0" cy="-8" r="7.5" fill="#A97A4C"/>
+            <circle cx="-6" cy="-13" r="2.6" fill="#A97A4C"/>
+            <circle cx="6" cy="-13" r="2.6" fill="#A97A4C"/>
+            <path d="M8 6 Q 18 6 16 -6" stroke="#8B5E34" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+          </g>
+
+          <!-- stone, follows a true projectile arc, ending exactly at the monkey -->
+          <circle r="4" fill="#6B7280">
+            <animateMotion dur="1.6s" repeatCount="indefinite" path="M300,118 Q195,14 90,148"/>
+          </circle>
+
+          <!-- impact spark where the stone reaches the monkey -->
+          <circle class="impact-spark" cx="90" cy="149" r="5" fill="var(--amber)"/>
+        </svg>
+        <div class="demo-caption">A stone thrown at a falling monkey always finds it — both are falling under the same gravity the whole time.</div>
+      </div>
+
+      <div class="mock-cbt">
+        <div class="browser-chrome"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+        <div class="mock-topbar">
+          <span class="mock-code">KM_CT_T1</span>
+          <span class="mock-timer">18:42</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-question">
+            <div class="mock-qhead">Q7 <span class="mock-tag">MCT · +4/−2</span></div>
+            <div class="mock-qimg"></div>
+            <div class="mock-options">
+              <span class="opt sel">A</span><span class="opt">B</span><span class="opt sel">C</span><span class="opt">D</span>
+            </div>
+          </div>
+          <div class="mock-palette">
+            <span class="cell an"></span><span class="cell an"></span><span class="cell na"></span><span class="cell nv"></span>
+            <span class="cell mk"></span><span class="cell an"></span><span class="cell an"></span><span class="cell amk"></span>
+            <span class="cell nv"></span><span class="cell nv"></span><span class="cell na"></span><span class="cell an"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><div class="n">6</div><div class="l">Test formats, quiz to Irodov-level</div></div>
+    <div class="stat"><div class="n">20+</div><div class="l">Advanced-pattern papers</div></div>
+    <div class="stat"><div class="n">0s</div><div class="l">Wait for your score</div></div>
+  </div>
+
+  <section class="ladder" id="formats">
+    <h2>Six formats, one climb.</h2>
+    <p class="lead">Start with a quick check on a single topic. End with problems that show up in the toughest reference books used for JEE Advanced prep.</p>
+    <div class="ladder-list">
+      <div class="ladder-row" style="border-left:4px solid #C9D6E3;">
+        <div class="ladder-num">01</div>
+        <div><h3>Topic Quiz</h3><p>A short, low-stakes check right after you finish a topic — few questions, quick result.</p></div>
+      </div>
+      <div class="ladder-row" style="border-left:4px solid #AFC3D8;">
+        <div class="ladder-num">02</div>
+        <div><h3>Topic Test</h3><p>A full topic-wise paper in the exact JEE format — enough questions for a real evaluation, not just a check.</p></div>
+      </div>
+      <div class="ladder-row" style="border-left:4px solid #8FAAC7;">
+        <div class="ladder-num">03</div>
+        <div><h3>Unlimited Practice</h3><p>Keep attempting the same topic as many times as you need — a fresh set of problems each time, no limit.</p></div>
+      </div>
+      <div class="ladder-row" style="border-left:4px solid #6C8FB3;">
+        <div class="ladder-num">04</div>
+        <div><h3>Mains Pattern Test</h3><p>Full-length, timed, and structured exactly like the JEE Main paper you'll actually sit for.</p></div>
+      </div>
+      <div class="ladder-row" style="border-left:4px solid #E3A008;">
+        <div class="ladder-num">05</div>
+        <div><h3>Advanced Pattern Tests</h3><p>Over 20 distinct paper patterns, matching the genuine variety JEE Advanced rotates through year to year.</p></div>
+      </div>
+      <div class="ladder-row top" style="border-left:4px solid var(--amber); background:var(--amber-soft);">
+        <div class="ladder-num">06</div>
+        <div>
+          <h3>Super Advanced Tests</h3>
+          <p>For students aiming past the standard syllabus — problems drawn from the reference books serious JEE aspirants eventually reach for.</p>
+          <div class="book-tags">
+            <span>Irodov</span><span>Krotov</span><span>Pathfinder</span><span>200 Puzzling Physics Problems</span><span>200 More Puzzling Physics Problems</span><span>+ other reputed test series</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <h2>Built to feel like exam day, not a quiz app.</h2>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="10" height="10" rx="1.5" stroke="var(--navy)" stroke-width="1.6"/><rect x="16" y="2" width="10" height="10" rx="1.5" stroke="var(--amber)" stroke-width="1.6"/><rect x="2" y="16" width="10" height="10" rx="1.5" stroke="var(--navy)" stroke-width="1.6"/><rect x="16" y="16" width="10" height="10" rx="1.5" stroke="var(--navy)" stroke-width="1.6"/></svg>
+        </div>
+        <h3>The same interface as exam day</h3>
+        <p>Question palette, countdown timer, mark-for-review, and image-based questions — set up exactly like the NTA and JEE Advanced CBT, so nothing feels unfamiliar when it counts.</p>
+      </div>
+      <div class="feat">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 22V6M12 22V12M20 22V4M4 22H24" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"/><circle cx="20" cy="4" r="2" fill="var(--amber)"/></svg>
+        </div>
+        <h3>Every question format, correctly marked</h3>
+        <p>Single-correct, multiple-correct, numerical-value, and matrix-match questions — each scored with its own JEE Advanced marking scheme, including partial credit where it applies.</p>
+      </div>
+      <div class="feat">
+        <div class="icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 3a11 11 0 1 0 11 11" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round"/><path d="M14 3v11l7 4" stroke="var(--amber)" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Your score, immediately</h3>
+        <p>Submit and see your result right away, then track every attempt from your dashboard — no waiting for a teacher to mark a paper.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="topics" id="topics">
+    <h2>One topic at a time, or the full syllabus.</h2>
+    <p class="lead">Every test is built from a specific topic, so you can drill a weak spot or attempt a full-length paper.</p>
+    <div class="topic-grid">
+      <div class="topic">Unit &amp; Dimension <span class="code">UD</span></div>
+      <div class="topic">Scalar &amp; Vector <span class="code">SV</span></div>
+      <div class="topic">Kinematics <span class="code">KM</span></div>
+      <div class="topic">Laws of Motion <span class="code">NLM</span></div>
+      <div class="topic">Work, Power &amp; Energy <span class="code">WEP</span></div>
+      <div class="topic">Circular Motion <span class="code">CM</span></div>
+      <div class="topic">Centre of Mass &amp; Collision <span class="code">COM</span></div>
+      <div class="topic">Rotational Motion <span class="code">RM</span></div>
+      <div class="topic">Gravitation <span class="code">GT</span></div>
+      <div class="topic">SHM <span class="code">SHM</span></div>
+      <div class="topic">Waves <span class="code">WV</span></div>
+      <div class="topic">Fluid Mechanics <span class="code">FL</span></div>
+      <div class="topic">Surface Tension <span class="code">ST</span></div>
+      <div class="topic">Properties of Matter <span class="code">POM</span></div>
+      <div class="topic">Heat &amp; Thermodynamics <span class="code">HT</span></div>
+      <div class="topic">Electrostatics <span class="code">EL</span></div>
+      <div class="topic">Current Electricity <span class="code">CE</span></div>
+      <div class="topic">Capacitors <span class="code">CP</span></div>
+      <div class="topic">Magnetism <span class="code">MG</span></div>
+      <div class="topic">EMI <span class="code">EMI</span></div>
+      <div class="topic">Alternating Current <span class="code">AC</span></div>
+      <div class="topic">Modern Physics <span class="code">MP</span></div>
+      <div class="topic">Ray Optics <span class="code">RO</span></div>
+      <div class="topic">Wave Optics <span class="code">WO</span></div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Your next test is one click away.</h2>
+    <p>Pick a topic, choose Main or Advanced, and start — the timer only runs once you're ready.</p>
+    <button class="btn-primary" onclick="openAuthModal()">Start a Test</button>
+  </section>
+
+  <footer>
+    Physics test series for JEE Main and Advanced.
+  </footer>
+</div>
+
+<div class="modal-overlay" id="authOverlay" onclick="if(event.target===this) closeAuthModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeAuthModal()" aria-label="Close">✕</button>
+    <h3>Continue to your test</h3>
+    <p>Log in if you already have an account, or sign up to create one.</p>
+    <div class="modal-actions">
+      <a class="btn-primary full" href="https://script.google.com/macros/s/AKfycbzc463sJ88HTUd4fFfPEKvC2J3t0TC0LAgqrZHt_dHhN1zaBisKCjjmA-3TjpRPiw5a4w/exec">Log In</a>
+      <button class="btn-secondary full" onclick="notifySignupComingSoon()">Sign Up</button>
+    </div>
+    <p class="modal-note" id="signupNote"></p>
+  </div>
+</div>
+
+<script>
+  function openAuthModal(){
+    document.getElementById('authOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeAuthModal(){
+    document.getElementById('authOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    document.getElementById('signupNote').textContent = '';
+  }
+  function notifySignupComingSoon(){
+    document.getElementById('signupNote').textContent = 'Sign-up is coming soon — for now, please log in if you already have an account.';
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeAuthModal();
+  });
+</script>
+
+</body>
+</html>
