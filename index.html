@@ -812,11 +812,10 @@
   const CBT_APP_URL = "https://script.google.com/macros/s/AKfycbzc463sJ88HTUd4fFfPEKvC2J3t0TC0LAgqrZHt_dHhN1zaBisKCjjmA-3TjpRPiw5a4w/exec";
 
   function gsCall(action, params){
-    return fetch(CBT_APP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: action, params: params || {} })
-    })
+    const url = CBT_APP_URL
+      + '?action=' + encodeURIComponent(action)
+      + '&params=' + encodeURIComponent(JSON.stringify(params || {}));
+    return fetch(url, { method: 'GET' })
     .then(function(res){
       if(!res.ok) throw new Error('Network error ' + res.status);
       return res.json();
